@@ -105,13 +105,10 @@ Version 2016-04-04"
               ("<backtab>" . dired-subtree-cycle)))
 (setq dired-listing-switches "-lXGh --group-directories-first"
       dired-dwim-target t)
-;; (add-hook 'dired-mode-hook 'dired-hide-details-mode)
 (use-package diredfl
-  :ensure t
   :config
   (diredfl-global-mode 1))
 (use-package dired-recent
-  :ensure t
   :config
   (dired-recent-mode  1))
 (use-package recentf
@@ -164,11 +161,32 @@ Version 2016-04-04"
   (global-set-key (kbd "C-M-=") 'default-text-scale-increase)
   (global-set-key (kbd "C-M--") 'default-text-scale-decrease))
 (use-package flycheck
-  :init (global-flycheck-mode))
+  :init (global-flycheck-mode)
+  :pin MELPA
+  :config
+  (setq-default flycheck-disabled-checkers
+                (append flycheck-disabled-checkers
+                        '(javascript-jshint)))
+  (flycheck-add-mode 'json-jsonlint 'json-mode)
+  (flycheck-add-mode 'javascript-eslint 'rjsx-mode))
+
 (use-package company-box
   :after company
   :diminish
   :hook (company-mode . company-box-mode))
+(use-package lsp-mode
+  :hook ((c-mode         ; clangd
+          c-or-c++-mode  ; clangd
+          java-mode      ; eclipse-jdtls
+          ) . lsp)
+  :commands lsp
+  :config
+  (setq lsp-prefer-flymake nil)
+  (setq lsp-enable-symbol-highlighting nil)
+  (setq lsp-signature-auto-activate nil))
+;; (use-package company-lsp
+;;   :commands company-lsp
+;;   :config (setq company-lsp-cache-candidates 'auto))
 (use-package company
   :diminish company-mode
   :custom
@@ -186,18 +204,23 @@ otherwise complete common or cycle."
   (defun my-company-visible-and-explicit-action-p ()
     (and (company-tooltip-visible-p)
          (company-explicit-action-p)))
+  (defun company-preview-if-not-tng-frontend (command)
+    "`company-preview-frontend', but not when tng is active."
+    (unless (and (eq command 'post-command)
+                 company-selection-changed
+                 (memq 'company-tng-frontend company-frontends))
+            (company-preview-frontend command)))
   (defun company-ac-setup ()
     "Sets up `company-mode' to behave similarly to `auto-complete-mode'."
     (setq company-require-match nil)
     (setq company-auto-complete #'my-company-visible-and-explicit-action-p)
-    (setq company-frontends '(company-echo-metadata-frontend
-                              company-pseudo-tooltip-unless-just-one-frontend-with-delay
-                              company-preview-frontend))
+    (setq company-frontends '(company-echo-metadata-frontend company-pseudo-tooltip-unless-just-one-frontend-with-delay                                                             company-preview-if-not-tng-frontend))
     (define-key company-active-map [tab]
       'company-complete-common-or-cycle-if-tooltip-visible-or-complete-selection)
     (define-key company-active-map (kbd "TAB")
       'company-complete-common-or-cycle-if-tooltip-visible-or-complete-selection))
   (setq company-idle-delay 0.0
+        company-tooltip-flip-when-above t
         company-minimum-prefix-length 1
         company-selection-wrap-around t
         company-tooltip-align-annotations t
@@ -303,7 +326,7 @@ otherwise complete common or cycle."
   (setq ivy-display-style 'fancy))
 (use-package swiper
   :requires (ivy)
-  :bind ("M-." .  swiper-thing-at-point)
+  :bind ("M-t" .  swiper-thing-at-point)
   :config
   (setq swiper-action-recenter t))
 (use-package ag)
@@ -319,20 +342,123 @@ otherwise complete common or cycle."
   :hook ((prog-mode . multiple-cursors-mode)
          (text-mode . multiple-cursors-mode)))
 
-;; JAVASCRIPT/REACT CONFIG
-;; completion: auto-complete
-;; refactor: js2-refactor-mode
-;; syntax: js2-mode
-(use-package js2-mode
-  :mode ("\\.js\\'" . js2-mode)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Yaml editing support and JSON
+;; json-mode => json-snatcher json-refactor
+(use-package yaml-mode
+  :mode (("\\.ya?ml$" . yaml-mode)))
+;; use json-mode from https://github.com/joshwnj/json-mode for json instead of js-mode or js2-mode
+(use-package json-mode
+  :ensure t
   :config
-  (define-key js-mode-map (kbd "M-.") nil)
-  (js2-imenu-extras-mode t))
-(use-package js2-refactor
-  :defer t
-  :hook (js2-mode . js2-refactor-mode))
-(use-package xref-js2
-  :defer t)
+  (setq js-indent-level 2)
+  (add-to-list 'auto-mode-alist '("\\.json" . json-mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; WEB-DEV CONFIG
+(use-package simple-httpd)
+(use-package skewer-mode)
+(use-package add-node-modules-path
+  :hook ((js2-mode . add-node-modules-path)
+         (json-mode . add-node-modules-path))
+  :config
+  (eval-after-load 'rjsx-mode
+    (add-node-modules-path)))
+(use-package emmet-mode
+  :hook (web-mode html-mode css-mode))
+(use-package company-web
+  :ensure t
+  :hook (web-mode . (lambda ()
+                      (add-to-list 'company-backends 'company-css)
+                      (add-to-list 'company-backends 'company-web-html)
+                      (add-to-list 'company-backends 'company-web-slim))))
+(use-package web-mode
+  :mode (("\\.css\\$" . web-mode)
+         ("\\.html\\$" . web-mode))
+  :custom
+  (web-mode-css-indent-offset 2)
+  (web-mode-code-indent-offset 2)
+  (web-mode-markup-indent-offset 2)
+  (web-mode-attr-indent-offset 2)
+  (web-mode-attr-value-indent-offset 2)
+  (web-mode-enable-auto-pairing t)
+  (web-mode-enable-auto-opening t)
+  (web-mode-enable-auto-closing t)
+  (web-mode-enable-css-colorization t)
+  (web-mode-enable-auto-expanding t)
+  (web-mode-enable-current-column-highlight t)
+  (web-mode-enable-current-element-highlight t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; JS/react config
+;; completetion: tide+company
+;; refactor: js-prettier
+;; syntax: flycheck
+;; linter: flycheck
+;; for React development use (setq create-lockfiles nil) to avoid crashes
+;; packages needed:
+;;     npm install -g prettier
+;;     npm install eslint --save-dev
+;;     npx eslint --init
+;;     npm install --save typescript
+;;     npm install --save @types/browserify
+(defun setup-tide-mode ()
+  "Basic setup for tide mode."
+  (interactive)
+  (tide-setup)
+  (if (file-exists-p (concat tide-project-root "node_modules/typescript/bin/tsserver"))
+        (setq tide-tsserver-executable "node_modules/typescript/bin/tsserver"))
+  (tide-hl-identifier-mode t)
+  (setq tide-format-options '(:indentSize 2 :tabSize 2 :insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil))
+  (local-set-key (kbd "C-c d") 'tide-documentation-at-point))
+
+(use-package tide
+  :diminish
+  :after (rjsx-mode company flycheck)
+  :requires flycheck
+  :hook ((rjsx-mode . setup-tide-mode)))
+(use-package prettier-js
+  :after (rjsx-mode)
+  :hook ((js2-mode . prettier-js-mode)
+         (markdown-mode . prettier-js-mode)
+         (json-mode . prettier-js-mode))
+  :config
+  (setq prettier-js-args '("--trailing-comma" "all"
+                           "--bracket-spacing" "false")))
+(use-package js-comint
+  :init
+  (defun inferior-js-mode-hook-setup ()
+    (add-hook 'comint-output-filter-functions 'js-comint-process-output))
+  :config
+  (add-hook 'inferior-js-mode-hook 'inferior-js-mode-hook-setup t)
+  (add-hook 'js2-mode-hook
+            (lambda ()
+              (local-set-key (kbd "\C-c !") 'run-js)
+              (local-set-key (kbd "\C-c\C-r") 'js-send-region)
+              (local-set-key (kbd "C-x C-e") 'js-send-last-sexp)
+              (local-set-key (kbd "C-c b") 'js-send-buffer)
+              (local-set-key (kbd "C-c C-b") 'js-send-buffer-and-go)))
+  (setq inferior-js-program-command "node"))
+(use-package rjsx-mode
+  :mode (("\\.js\\'" . rjsx-mode)
+         ("\\.tsx\\'" . rjsx-mode))
+  :config
+  (setq js2-mode-show-parse-errors nil)
+  (setq js2-mode-show-strict-warnings nil)
+  (add-hook 'js2-mode-hook #'prettier-js-mode)
+  (add-hook 'js2-mode-hook #'setup-tide-mode))
+
+(use-package exec-path-from-shell
+  :ensure t
+  :custom
+  (exec-path-from-shell-check-startup-files nil)
+  :config
+  (push "HISTFILE" exec-path-from-shell-variables)
+    (exec-path-from-shell-initialize))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; PYTHON CONFIG
 ;; linter/refractor: black
@@ -374,7 +500,7 @@ otherwise complete common or cycle."
  '(company-dabbrev-ignore-case nil)
  '(package-selected-packages
    (quote
-    (dired-recent diredfl ivy-rich all-the-icons beginend default-text-scale company-prescient ivy-prescient prescient benchmark-init flx company-quickhelp-terminal crux company-box company-quickhelp counsel ace-jump ace-jump-mode diminish flycheck auto-package-update electric-pair-mode moe-theme-switcher electric-pair ssh-agency jedi moe-theme bind-map rjsx-mode ag company-tern impatient-mode company-jedi smex idle-highlight-in-visible-buffers-mode idle-highlight-mode magit async git-commit list-packages-ext use-package image+ gnu-elpa-keyring-update magithub pylint python-black multiple-cursors material-theme elpy better-defaults python))))
+    (tide flycheck exec-path-from-shell company-web skewer-mode simple-httpd js2 prettier-js rjsx json-snatcher json-reformat js-comint web-mode emmet-mode add-node-modules-path yaml-mode company-lsp lsp-mode dired-recent diredfl ivy-rich all-the-icons beginend default-text-scale company-prescient ivy-prescient prescient benchmark-init flx company-quickhelp-terminal crux company-box company-quickhelp counsel ace-jump ace-jump-mode diminish auto-package-update electric-pair-mode moe-theme-switcher electric-pair ssh-agency jedi moe-theme bind-map rjsx-mode ag company-tern impatient-mode company-jedi smex idle-highlight-in-visible-buffers-mode idle-highlight-mode magit async git-commit list-packages-ext use-package image+ gnu-elpa-keyring-update magithub pylint python-black multiple-cursors material-theme elpy better-defaults python))))
 
 (show-paren-mode 1)
 (setq show-paren-style 'expression)
@@ -390,7 +516,6 @@ otherwise complete common or cycle."
 (setq ring-bell-function 'ignore)
 (defalias 'yes-or-no-p 'y-or-n-p)
 ;; regular cursor (only works in GUI)
-(setq cursor-type '(bar . 5))
 (setq-default blink-cursor-blinks 0)
 (setq scroll-preserve-screen-position t
       scroll-conservatively 10000)
