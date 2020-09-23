@@ -196,9 +196,12 @@ Version 2016-04-04"
   (add-hook 'after-init-hook 'benchmark-init/deactivate))
 (use-package diff-hl
   :straight t
+  :hook (prog-mode . diff-hl-mode)
   :config
   (diff-hl-margin-mode t)
-  (diff-hl-flydiff-mode t))
+  (diff-hl-flydiff-mode t)
+  (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 (use-package hl-todo :straight t)
 (use-package magit-todos
   :straight t)
