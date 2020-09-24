@@ -89,13 +89,14 @@ Version 2016-04-04"
       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
-	(url-retrieve-synchronously  "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-	 'silent 'inhibit-cookies)
+        (url-retrieve-synchronously  "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+                                     'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-(setq straight-use-package-by-default t)
 (straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+(setq use-package-always-demand t)
 
 ;;; Quick Defaults
 (setq-default
@@ -151,10 +152,9 @@ Version 2016-04-04"
   (setq blink-matching-paren t)
   (setq show-paren-style 'parenthesis))
 ;; only use agency when windows detected
-(cond ((string-equal system-type "windows-nt")
-       (progn
-         (use-package ssh-agency
-           :defer t)))) ;; only needed for windows
+(use-package ssh-agency
+  :if (string-equal system-type "windows-nt")
+  :straight t)
 (use-package xclip
   :straight t
   :init
@@ -179,17 +179,11 @@ Version 2016-04-04"
   :straight t
   :config
   (keychain-refresh-environment))
-(use-package auto-package-update
-  :defer 10
-  :config
-  (setq auto-package-update-delete-old-versions t)
-  (auto-package-update-maybe))
 ;; preview line for goto-line
 (use-package goto-line-preview
   :commands (goto-line-preview)
   :config
   (global-set-key [remap goto-line] 'goto-line-preview))
-
 (use-package benchmark-init
   :config
   ;; To disable collection of benchmark data after init is done.
@@ -204,9 +198,8 @@ Version 2016-04-04"
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 (use-package hl-todo :straight t)
 (use-package magit-todos
-  :straight t)
+  :after magit)
 (use-package magit
-  :defer 5
   :diminish
   :bind ("M-s" . 'magit-status)
   :config
@@ -305,6 +298,7 @@ Version 2016-04-04"
   :diminish eldoc-mode)
 (use-package flycheck
   :straight t
+  :diminish
   :commands flycheck-mode
   :init
   (add-hook 'prog-mode-hook #'flycheck-mode)
@@ -335,22 +329,13 @@ Version 2016-04-04"
   (delete-selection-mode 1)
   (er/enable-mode-expansions 'rjsx-mode 'er/add-rjsx-mode-expansions))
 (use-package all-the-icons
-  :defer t)
-(use-package company-box
-  :after company
-  :diminish
-  :hook (company-mode . company-box-mode)
-  :init
-  (setq company-box-enable-icon (display-graphic-p))
-  :config
-  (setq company-box-backends-colors nil))
+  :straight t)
 (use-package lsp-mode
-  :defer t
   :hook (((c-mode        ; clangd
-          c-or-c++-mode  ; clangd
-          java-mode      ; eclipse-jdtls
-          go-mode
-          ) . lsp)
+           c-or-c++-mode  ; clangd
+           java-mode      ; eclipse-jdtls
+           go-mode
+           ) . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
   :init
   (defun lsp-go-install-save-hooks ()
@@ -370,6 +355,14 @@ Version 2016-04-04"
 (use-package lsp-ui
   :defer t
   :commands lsp-ui-mode)
+(use-package company-box
+  :after company
+  :diminish
+  :hook (company-mode . company-box-mode)
+  :init
+  (setq company-box-enable-icon (display-graphic-p))
+  :config
+  (setq company-box-backends-colors nil))
 (use-package company-posframe
   :after company
   :diminish company-posframe-mode
@@ -420,17 +413,13 @@ Version 2016-04-04"
   :after company
   :init
   (company-quickhelp-mode t)
-  (setq company-quickhelp-delay 0.1)
-  )
+  (setq company-quickhelp-delay 0.1))
 ;; use if only on terminal
 (use-package company-quickhelp-terminal
-  :defer t
-  ;; :init
-  ;; (with-eval-after-load 'company-quickhelp
-  ;;   (company-quickhelp-terminal-mode 1)
-  )
+  :if (not (display-graphic-p))
+  :straight t)
 (use-package company-shell
-  :straight t
+  :after company
   :config
   (add-to-list 'company-backends '(company-shell company-shell-env company-files)))
 (use-package company-jedi
@@ -441,9 +430,9 @@ Version 2016-04-04"
 (use-package smex
   :straight t)
 ;; IF NEW MACHINE USE M-x all-the-icons-install-fonts
-(use-package ivy
+(use-package counsel
   :straight t
-  :diminish ivy-mode
+  :diminish (ivy-mode counsel-mode)
   :bind* (("M-x" . counsel-M-x)
           ("C-x b" . ivy-switch-buffer)
           ("C-s" . swiper-isearch)
@@ -453,22 +442,23 @@ Version 2016-04-04"
           ("C-c r" . ivy-resume)
           ("C-c C-r" . counsel-rg)
           ("M-q" . counsel-yank-pop)
+          ("M-t" .  swiper-thing-at-point)
           :map ivy-minibuffer-map
           ("C-j" . ivy-immediate-done))
+  :hook ((after-init . ivy-mode)
+         (ivy-mode . counsel-mode))
   :config
-  (ivy-mode t)
+  (setq swiper-action-recenter t)
   (setq ivy-extra-directories nil)
   (setq ivy-use-virtual-buffers t)
   (setq ivy-count-format "%d/%d ")
   (setq ivy-display-style 'fancy))
 (use-package all-the-icons-ivy-rich
-  :after (ivy all-the-icons)
-  :config (all-the-icons-ivy-rich-mode t))
+  :hook (ivy-mode . all-the-icons-ivy-rich-mode))
 (use-package ivy-rich
-  :after (ivy all-the-icons-ivy-rich)
+  :hook (all-the-icons-ivy-rich-mode . ivy-rich-mode)
   :init
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
-  :config
   (defun ivy-rich-switch-buffer-icon (candidate)
     (with-current-buffer
         (get-buffer candidate)
@@ -476,6 +466,7 @@ Version 2016-04-04"
         (if (symbolp icon)
             (all-the-icons-icon-for-mode 'fundamental-mode)
           icon))))
+  :config
   ;; ;; All the icon support to ivy-rich
   (setq ivy-rich-display-transformers-list
         '(ivy-switch-buffer
@@ -491,26 +482,17 @@ Version 2016-04-04"
            (lambda (cand) (get-buffer cand)))))
   (setq ivy-rich-path-style 'abbrev)
   (ivy-rich-mode 1))
-(use-package counsel
-  :after (ivy)
-  :straight t
-  :requires (smex ivy swiper))
 (use-package prescient
   :straight t)
 (use-package ivy-prescient
-  :straight t
+  :after (prescient)
   :config
   (setq ivy-prescient-enable-sorting t)
   (setq ivy-prescient-enable-filtering t))
 (use-package company-prescient
-  :after company
+  :after (company prescient)
   :config
   (company-prescient-mode t))
-(use-package swiper
-  :requires (ivy)
-  :bind ("M-t" .  swiper-thing-at-point)
-  :config
-  (setq swiper-action-recenter t))
 (use-package ag
   :defer 3)
 (use-package avy
@@ -533,6 +515,12 @@ Version 2016-04-04"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; Langugaes Support
+
+;; Debugging
+(use-package realgud
+  :defer t)
+
 ;; Yaml editing support and JSON
 ;; json-mode => json-snatcher json-refactor
 (use-package yaml-mode
@@ -543,7 +531,6 @@ Version 2016-04-04"
   :config
   (setq js-indent-level 4))
 (use-package dotenv-mode
-  :defer t
   :mode ("\\.env\\'" . dotenv-mode))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -553,7 +540,6 @@ Version 2016-04-04"
 (use-package skewer-mode
   :defer t)
 (use-package restclient
-  :defer t
   :mode ("\\.http\\'" . restclient-mode))
 (use-package add-node-modules-path
   :hook ((js2-mode . add-node-modules-path)
@@ -564,14 +550,11 @@ Version 2016-04-04"
 (use-package emmet-mode
   :hook (web-mode . emmet-mode))
 (use-package company-web
-  :defer t
   :hook (web-mode . (lambda ()
                       (add-to-list 'company-backends 'company-css)
                       (add-to-list 'company-backends 'company-web-html)
                       (add-to-list 'company-backends 'company-web-slim))))
 (use-package web-mode
-  :defer t
-  :hook (html-mode . web-mode)
   :mode (("\\.css\\$" . web-mode)
          ("\\.html\\$" . web-mode))
   :custom
@@ -639,7 +622,8 @@ Version 2016-04-04"
               (local-set-key (kbd "C-x C-e") 'js-send-last-sexp)
               (local-set-key (kbd "C-c b") 'js-send-buffer)
               (local-set-key (kbd "C-c C-b") 'js-send-buffer-and-go)))
-  (setq inferior-js-program-command "node"))
+  ;;(setq inferior-js-program-command "node")
+  )
 (use-package rjsx-mode
   :mode (("\\.js\\'" . rjsx-mode)
          ("\\.tsx\\'" . rjsx-mode))
@@ -666,7 +650,6 @@ Version 2016-04-04"
 ;; completion: company
 ;; install black, flake8 ipython, jedi, rope, autopep8, yapf
 (use-package python
-  :defer t
   :delight " Py"
   :mode ("\\.py" . python-mode)
   :init
@@ -695,14 +678,13 @@ Version 2016-04-04"
 ;; MAY HAVE TO CHANGE PYTHON PATH
 ;; INSTALL PYENV, VIRTUALENVWRAPPER to be used by elpy
 (use-package elpy
-  :defer t
   :diminish ""
   :init (with-eval-after-load 'python (elpy-enable))
   :hook (elpy-mode . flycheck-mode)
   :config
   (add-to-list 'process-coding-system-alist '("elpy" . (utf-8 . utf-8)))
   (setq python-shell-interpreter "ipython"
-      python-shell-interpreter-args "-i --simple-prompt")
+        python-shell-interpreter-args "-i --simple-prompt")
   (setq elpy-shell-starting-directory 'current-directory)
   ;;use flake8
   (setq python-check-command "flake8")
@@ -722,7 +704,6 @@ Version 2016-04-04"
 
 ;; Golang Setup
 (use-package go-mode
-  :straight t
   :mode ("\\.go\\'" . go-mode)
   :init
   ;;Smaller compilation buffer
