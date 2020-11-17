@@ -1,26 +1,31 @@
-;;; package --- Summary:
 ;;; -*- lexical-binding: t -*-
+;;; package --- Summary
 ;;; Commentary:
 ;;;init.el --- Emacs configuration
 
 ;;; Code:
+;; TODO:
+;;      use-package-ensure-system-package
+;;          - https://github.com/waymondo/use-package-ensure-system-package
+
 ;; startup defaults
+(defconst my/wsl (not (null (string-match "Linux.*Microsoft" (shell-command-to-string "uname -a")))))
 (defvar file-name-handler-alist-old file-name-handler-alist)
 (setq package-enable-at-startup nil
       message-log-max 16384
       gc-cons-threshold 402653184
       gc-cons-percentage 0.6
       auto-window-vscroll nil
+      global-auto-revert-mode t
       ad-redefinition-action 'accept
       calendar-latitude 33.916403
       calendar-longitude -118.352575
       create-lockfiles nil
       select-enable-clipboard t
       inhibit-startup-screen t)
-
-;; load custom faces and vars for packages
-(setq custom-file "~/.emacs.d/custom.el")
-(when (file-exists-p custom-file) (load custom-file))
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(setq blink-matching-paren 'show)
 ;; create backup in emacs folder "backup"
 (defvar home-directory (expand-file-name "~/.emacs.d/"))
 (defvar backup-dir (concat home-directory "backups/"))
@@ -39,6 +44,9 @@
       auto-save-default t
       backup-directory-alist `((".*" . ,(concat user-emacs-directory "backups")))
       auto-save-file-name-transforms `((".*" ,(concat user-emacs-directory "autosave") t)))
+;; we will call `blink-matching-open` ourselves...
+(remove-hook 'post-self-insert-hook
+             #'blink-paren-post-self-insert-function)
 
 ;; improve startup performance
 ;; disable double buffering if on Windows
@@ -72,15 +80,77 @@
   "Recenter display after func using ARGS as input."
   (recenter))
 (defun pop-local-mark-ring ()
-    "Move cursor to last mark position of current buffer.
+  "Move cursor to last mark position of current buffer.
 Call this repeatedly will cycle all positions in `mark-ring'.
 URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
 Version 2016-04-04"
-    (interactive)
-    (set-mark-command t))
+  (interactive)
+  (set-mark-command t))
+(defun split-and-follow-horizontally ()
+  "Split window horizontally and follow with the previous buffer open."
+  (interactive)
+  (split-window-below)
+  (balance-windows)
+  (other-window 1)
+  (previous-buffer))
+(defun split-and-follow-vertically ()
+  "Split window vertically and follow with the previous buffer open."
+  (interactive)
+  (split-window-right)
+  (balance-windows)
+  (other-window 1)
+  (previous-buffer))
+(defun display-line-overlay+ (pos str &optional face)
+  "Display line at POS as STR with FACE.  FACE defaults to inheriting from default and highlight."
+  (let ((ol (save-excursion
+              (goto-char pos)
+              (make-overlay (line-beginning-position)
+                            (line-end-position)))))
+    (overlay-put ol 'display str)
+    (overlay-put ol 'face
+                 (or face '(:inherit default :inherit highlight)))
+    ol))
 
+(global-set-key (kbd "C-x k") 'kill-this-buffer)
+(global-set-key (kbd "C-x 2") 'split-and-follow-horizontally)
+(global-set-key (kbd "C-x 3") 'split-and-follow-vertically)
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+(toggle-frame-maximized)
+
+;;; Random useful code
+;; overlay to help display where other paren is unobtrusively
+(let ((ov nil)) ; keep track of the overlay
+  (advice-add
+   #'show-paren-function
+   :after
+   (defun show-paren--off-screen+ (&rest _args)
+     "Display matching line for off-screen paren."
+     (when (overlayp ov)
+       (delete-overlay ov))
+     ;; check if it's appropriate to show match info,
+     ;; see `blink-paren-post-self-insert-function'
+     (when (and (overlay-buffer show-paren--overlay)
+                (not (or cursor-in-echo-area
+                         executing-kbd-macro
+                         noninteractive
+                         (minibufferp)
+                         this-command))
+                (and (not (bobp))
+                     (memq (char-syntax (char-before)) '(?\) ?\$)))
+                (= 1 (logand 1 (- (point)
+                                  (save-excursion
+                                    (forward-char -1)
+                                    (skip-syntax-backward "/\\")
+                                    (point))))))
+       ;; rebind `minibuffer-message' called by
+       ;; `blink-matching-open' to handle the overlay display
+       (cl-letf (((symbol-function #'minibuffer-message)
+                  (lambda (msg &rest args)
+                    (let ((msg (apply #'format-message msg args)))
+                      (setq ov (display-line-overlay+
+                                (window-start) msg ))))))
+         (blink-matching-open))))))
 
 ;; load packages and repos
 (defvar bootstrap-version)
@@ -136,7 +206,6 @@ Version 2016-04-04"
   :straight t)
 (use-package compdef
   :straight t)
-;; show matching parens by highlighting parens
 (use-package delight
   :defer t)
 (use-package beginend
@@ -145,12 +214,17 @@ Version 2016-04-04"
   :config
   (dolist (mode (cons 'beginend-global-mode (mapcar #'cdr beginend-modes)))
     (diminish mode)))
+;; show matching parens by highlighting parens
 (use-package paren
-  :init
-  (setq show-paren-mode t)
+  :straight nil
+  :custom
+  (show-paren-style 'paren)
+  (show-paren-delay 0.03)
+  (show-paren-highlight-openparen t)
+  (show-paren-when-point-inside-paren nil)
+  (show-paren-when-point-in-periphery t)
   :config
-  (setq blink-matching-paren t)
-  (setq show-paren-style 'parenthesis))
+  (setq show-paren-mode t))
 ;; only use agency when windows detected
 (use-package ssh-agency
   :if (string-equal system-type "windows-nt")
@@ -188,6 +262,7 @@ Version 2016-04-04"
   :config
   ;; To disable collection of benchmark data after init is done.
   (add-hook 'after-init-hook 'benchmark-init/deactivate))
+;; TODO: once add projectile, have this hook to projectile
 (use-package diff-hl
   :straight t
   :hook (prog-mode . diff-hl-mode)
@@ -196,10 +271,12 @@ Version 2016-04-04"
   (diff-hl-flydiff-mode t)
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
-(use-package hl-todo :straight t)
+(use-package hl-todo
+  :hook (after-init . hl-todo-mode))
 (use-package magit-todos
   :after magit)
 (use-package magit
+  :commands (magit-status)
   :diminish
   :bind ("M-s" . 'magit-status)
   :config
@@ -209,9 +286,13 @@ Version 2016-04-04"
   :defer 1)
 (use-package grep
   :defer t)
+(use-package wgrep
+  :straight t
+  :custom
+  (wgrep-auto-save-buffer t))
 ;; Ripgrep
 (use-package rg
-  :defer 2
+  :commands (rg rg-dwim)
   :config
   (global-set-key (kbd "C-M-g") 'rg)
   (global-set-key (kbd "C-M-d") 'rg-dwim))
@@ -230,8 +311,8 @@ Version 2016-04-04"
   :bind (:map dired-mode-map
               ("i" . dired-subtree-insert)
               (";" . dired-subtree-remove)
-              ("<tab>" . dired-subtree-toggle)
-              ("<backtab>" . dired-subtree-cycle)))
+  ("<tab>" . dired-subtree-toggle)
+  ("<backtab>" . dired-subtree-cycle)))
 (setq dired-listing-switches "-lXGh --group-directories-first"
       dired-dwim-target t)
 (use-package diredfl
@@ -276,16 +357,39 @@ Version 2016-04-04"
    ("M-<left>" . windmove-left)
    ("M-<up>" . windmove-up)
    ("M-<down>" . windmove-down)))
+(use-package page-break-lines
+  :defer t)
+(use-package dashboard
+  :custom
+  (dashboard-set-init-info t)
+  (dashboard-set-heading-icons t)
+  (dashboard-set-file-icons t)
+  (dashboard-banner-logo-title "Welcome to your Emacs Dashboard")
+  (dashboard-items '((recents  . 5)
+                     (projects . 5)
+                     (bookmarks . 5)
+                     (agenda . 5)))
+  ;; Set the banner
+  ;; Value can be
+  ;; 'official which displays the official emacs logo
+  ;; 'logo which displays an alternative emacs logo
+  ;; 1, 2 or 3 which displays one of the text banners
+  ;; "path/to/your/image.png" or "path/to/your/text.txt" which displays whatever image/text you would prefer
+  (dashboard-startup-banner "/home/aaronzinho/Pictures/resized-evangelion-rei.png")
+  ;; Content is not centered by default. To center, set
+  (dashboard-center-content t)
+  :config
+  (dashboard-setup-startup-hook))
 (use-package diminish
   :straight t)
 (use-package beacon
-  :defer 2
+  :straight t
   :diminish
   :config
   (setq beacon-color "#111FFF")
   (beacon-mode 1))
 (use-package which-key
-  :defer 2
+  :straight t
   :diminish
   :config
   (which-key-mode t))
@@ -297,7 +401,6 @@ Version 2016-04-04"
 (use-package eldoc
   :diminish eldoc-mode)
 (use-package flycheck
-  :straight t
   :diminish
   :commands flycheck-mode
   :init
@@ -305,7 +408,7 @@ Version 2016-04-04"
   :config
   (setq-default flycheck-disabled-checkers
                 (append flycheck-disabled-checkers
-                        '(javascript-jshint)))
+                        '(javascript-jshint c/c++-clang c/c++-cppcheck c/c++-gcc)))
   (flycheck-add-mode 'json-jsonlint 'json-mode)
   (flycheck-add-mode 'javascript-eslint 'rjsx-mode))
 (use-package aggressive-indent
@@ -314,8 +417,8 @@ Version 2016-04-04"
   :config
   (global-aggressive-indent-mode 1)
   (append aggressive-indent-excluded-modes '(web-mode html-mode python-mode)))
-(use-package expand-region ;; use to highlight more characters with each use
-  :straight t
+;; use to highlight more characters with each use
+(use-package expand-region
   :bind ("M-2" . 'er/expand-region)
   :init
   (defun er/add-rjsx-mode-expansions ()
@@ -330,9 +433,26 @@ Version 2016-04-04"
   (er/enable-mode-expansions 'rjsx-mode 'er/add-rjsx-mode-expansions))
 (use-package all-the-icons
   :straight t)
+(use-package emojify
+  :if (not (display-graphic-p))
+  :hook (after-init . global-emojify-mode))
+(use-package cmake-font-lock)
+(use-package ccls
+  :custom
+  (ccls-args nil)
+  (ccls-executable "ccls")
+  :hook ((c-mode c++-mode objc-mode) .
+         (lambda () (require 'ccls) (lsp))))
+(use-package cmake-mode
+  :init
+  (setq auto-mode-alist
+        (append
+         '(("CMakeLists\\.txt\\'" . cmake-mode))
+         '(("\\.cmake\\'" . cmake-mode))
+         auto-mode-alist)))
 (use-package lsp-mode
   :hook (((c-mode        ; clangd
-           c-or-c++-mode  ; clangd
+           c++-mode  ; clangd
            java-mode      ; eclipse-jdtls
            go-mode
            ) . lsp)
@@ -345,6 +465,8 @@ Version 2016-04-04"
     (setq lsp-eldoc-render-all t)
     (setq lsp-gopls-complete-unimported t))
   :config
+  (setq lsp-enable-indentation nil)
+  (setq lsp-enable-on-type-formatting nil)
   (setq lsp-prefer-flymake nil)
   (setq lsp-enable-symbol-highlighting t)
   (setq lsp-signature-auto-activate nil)
@@ -353,7 +475,6 @@ Version 2016-04-04"
   (setq read-process-output-max (* 1024 1024)) ;;1MB
   (add-hook 'go-mode-hook 'lsp-go-install-save-hooks))
 (use-package lsp-ui
-  :defer t
   :commands lsp-ui-mode)
 (use-package company-box
   :after company
@@ -384,7 +505,7 @@ Version 2016-04-04"
                  company-selection-changed
                  (memq 'company-tng-frontend company-frontends))
       (company-preview-frontend command)))
-  (setq company-idle-delay 0.0
+  (setq company-idle-delay 0.1
         company-echo-delay 0 ;; remove annoying blinking
         company-tooltip-flip-when-above t
         company-tooltip-limit 15
@@ -408,7 +529,6 @@ Version 2016-04-04"
   ;; -----------------------------------------------------------------
   :config
   (global-company-mode t))
-
 (use-package company-quickhelp
   :after company
   :init
@@ -427,11 +547,13 @@ Version 2016-04-04"
   :bind (:map jedi-mode-map
               ("M-d" . jedi:goto-definition)
               ("M-b" . jedi:goto-definition-pop-marker)))
+(use-package company-org-block
+  :straight (:type git :host github :repo "aaronzinhoo/company-org-block" :branch "master"))
 (use-package smex
   :straight t)
 ;; IF NEW MACHINE USE M-x all-the-icons-install-fonts
+;; should load ivy and swiper automatically
 (use-package counsel
-  :straight t
   :diminish (ivy-mode counsel-mode)
   :bind* (("M-x" . counsel-M-x)
           ("C-x b" . ivy-switch-buffer)
@@ -444,15 +566,23 @@ Version 2016-04-04"
           ("M-q" . counsel-yank-pop)
           ("M-t" .  swiper-thing-at-point)
           :map ivy-minibuffer-map
+          ("C-c o" . ivy-occur)
           ("C-j" . ivy-immediate-done))
   :hook ((after-init . ivy-mode)
          (ivy-mode . counsel-mode))
+  :custom
+  (ivy-initial-inputs-alist nil)
   :config
   (setq swiper-action-recenter t)
+  (setq enable-recursive-minibuffers t)
   (setq ivy-extra-directories nil)
   (setq ivy-use-virtual-buffers t)
   (setq ivy-count-format "%d/%d ")
   (setq ivy-display-style 'fancy))
+(use-package counsel-projectile
+  :config
+  (counsel-projectile-mode t))
+;; load before ivy-rich for better performance
 (use-package all-the-icons-ivy-rich
   :hook (ivy-mode . all-the-icons-ivy-rich-mode))
 (use-package ivy-rich
@@ -515,12 +645,129 @@ Version 2016-04-04"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; Langugaes Support
+;;; Org Support
+;; sudo apt-get install texlive-latex-base texlive-fonts-recommended \
+;; texlive-fonts-extra texlive-latex-extra
+
+;; for exporting html documents
+(use-package htmlize
+  :straight t)
+(use-package org
+  ;; org-plus-contrib is a feature so must be loaded within org
+  :straight org-plus-contrib
+  :mode (("\\.org$" . org-mode))
+  :hook (org-mode . org-indent-mode)
+  :bind
+  ("C-c l" . org-store-link)
+  ("C-c a" . org-agenda)
+  ("C-M-<return>" . org-insert-subheading)
+  :init
+  (setq org-directory "~/org/notebook")
+  ;; setup electric-pairs mode for org-mode
+  (defvar org-electric-pairs '((?/ . ?/) (?= . ?=)) "Electric pairs for org-mode.")
+  ;; set a local variable ot contain new pairs for org-mode buffers
+  (defun org-add-electric-pairs ()
+    (setq-local electric-pair-pairs (append electric-pair-pairs org-electric-pairs))
+    (setq-local electric-pair-text-pairs electric-pair-pairs))
+  (defun org-keyword-backend (command &optional arg &rest ignored)
+    "Add completions in org-mode when prefix is ^#+"
+    (interactive (list 'interactive))
+    (cl-case command
+      (interactive (company-begin-backend 'org-keyword-backend))
+      (prefix (and (eq major-mode 'org-mode)
+                   (company-grab-line "^#\\+\\(\\w*\\)"
+                                      t)))
+      (candidates (mapcar #'upcase
+                          (cl-remove-if-not
+                           (lambda (c) (string-prefix-p arg c))
+                           (pcomplete-completions))))
+      (ignore-case t)
+      (duplicates t)))
+  (if my/wsl
+      (progn
+        (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "wslview")))
+  :config
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python     . t)
+     (js         . t)
+     (shell      . t)))
+  (setq org-file-apps
+        (quote
+         ((auto-mode . emacs)
+          ("\\.mm\\'" . default)
+          ("\\.x?html?\\'" . default)
+          ("\\.pdf\\'" . default))))
+  ;; TODO: look to make refile easier to use (refile and delete)
+  ;; NOTE: refile adds heading section to another heading section of your choice
+  ;; single key press for certain movements when at first * in a heading
+  (setq org-use-speed-commands t)
+  ;;hide the leading stars in org mode
+  (setq org-hide-leading-stars t)
+  (setq org-confirm-babel-evaluate nil)
+  ;; allow native font editing (highlighting)
+  (setq org-src-fontify-natively t)
+  ;; tab acts normally in src mode
+  (setq org-src-tab-acts-natively t)
+  (setq org-export-use-babel t)
+  ;; use python-3 in org mode
+  (setq org-babel-python-command "python3")
+  ;; add js2 mode to the src languages for org-mode blocks
+  (add-to-list 'org-src-lang-modes '("js" . js2))
+  (add-to-list 'org-src-lang-modes '("python" . python))
+  ;; add quick way to make code block with name "<s"[TAB]
+  ;; arg: results: [output value replace silent]
+  (add-to-list 'org-structure-template-alist '("js" . "src js"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  ;; make company backend simple for org files
+  (add-hook 'org-mode-hook
+            '(lambda ()
+               (set (make-local-variable 'company-backends)
+                    '(company-capf company-org-block org-keyword-backend company-ispell company-dabbrev))))
+  ;; activate local electric-pair mode for org-buffer
+  ;; disable <> auto pairing in electric-pair-mode for org-mode
+  (add-hook 'org-mode-hook 'org-add-electric-pairs)
+  (add-hook
+   'org-mode-hook
+   (lambda ()
+     (setq-local electric-pair-inhibit-predicate
+                 `(lambda (c)
+                    (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
+  ;; (add-hook 'org-mode-hook #'add-easy-templates-to-capf) ;; runs into error
+  (org-reload))
+;; replsace all headlines with bullets
+(use-package org-superstar
+  :hook (org-mode . org-superstar-mode))
+;; autoload html files org
+(use-package org-preview-html
+  :straight t)
+;; use eldoc in org-mode
+(use-package org-eldoc
+  :straight nil
+  :after (org))
+
+;;; Programming/Project Management
+(use-package bookmark+
+  :custom
+  (bookmark-default-file "~/.emacs.d/bookmarks") ;;define file to use.
+  (bookmark-save-flag 1) ;;save bookmarks to .emacs.bmk after each entry
+  )
+(use-package projectile
+  :custom
+  (projectile-find-dir-includes-top-level t)
+  (projectile-switch-project-action #'projectile-find-dir)
+  (projectile-indexing-method 'alien)
+  (projectile-sort-order 'recentf)
+  (projectile-completion-system 'ivy)
+  :config
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+
+;;; Languages Support
 
 ;; Debugging
 (use-package realgud
   :defer t)
-
 ;; Yaml editing support and JSON
 ;; json-mode => json-snatcher json-refactor
 (use-package yaml-mode
@@ -723,9 +970,10 @@ Version 2016-04-04"
         (set (make-local-variable 'compile-command)
              "go build -v -o ./main")))
   (setq compilation-read-command nil)
-  :bind (("M-," . compile)
-         ("M-." . godef-jump)
-         ("M-*" . pop-tag-mark))
+  :bind (:map go-mode-map
+              ("M-," . compile)
+              ("M-." . godef-jump)
+              ("M-*" . pop-tag-mark))
   :config
   (setq compilation-scroll-output t)
   (add-hook 'compilation-mode-hook 'my-compilation-hook)
@@ -733,9 +981,7 @@ Version 2016-04-04"
   (add-hook 'go-mode-hook 'my-go-mode-hook))
 ;; ----------------------------------------------------------------
 (use-package moe-theme
-  :straight (:host github
-                   :repo "kuanyui/moe-theme.el"
-                   :branch "dev")
+  :straight (moe-theme-switcher :type git :host github :repo "kuanyui/moe-theme.el" :branch "dev")
   :config
   (require 'moe-theme-switcher)
   (setq moe-theme-highlight-buffer-id t)
@@ -744,6 +990,8 @@ Version 2016-04-04"
 ;; Helpful Defualt keys
 ;; C-h k <key> -> describe what key is binded to
 ;; M-DEL del backward one word
+;; C-c ' edit code in buffer
+;; C-c C-c run org code block
 
 ;;CUSTOM EMACS BUILT-IN KEYS
 (global-set-key (kbd "M-i") 'previous-line)
@@ -752,6 +1000,12 @@ Version 2016-04-04"
 (global-set-key (kbd "M-l") 'forward-char)
 ;;(global-set-key (kbd "M-q") 'yank)
 (global-set-key (kbd "M-4") 'pop-local-mark-ring)
+;; delete pair of items
+(global-set-key (kbd "C-c C-p") 'delete-pair)
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
+;; load custom faces and vars for packages
+(setq custom-file "~/.emacs.d/custom.el")
+(when (file-exists-p custom-file) (load custom-file))
 ;;; init.el ends here
