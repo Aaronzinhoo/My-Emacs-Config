@@ -1,0 +1,12 @@
+* naive_utility_calculus_for_action_understanding
+:PROPERTIES:
+:NOTER_DOCUMENT: ../pdfs/naive_utility_calculus_for_action_understanding
+:END:
+** Abstract
++ this is a demo
+* compositional_object_based_approach_to_learning_physical_dynamics
+:PROPERTIES:
+:NOTER_DOCUMENT: ../pdfs/compositional_object_based_approach_to_learning_physical_dynamics.pdf
+:END:
+** Abstract
++ this is a demo as well

@@ -1,0 +1,377 @@
+* Programming
+
+** TODO  alphapapa [Github] org-protocol-capture-html: Capture HTML from the browser selection into Emacs as org-mode content :BOOKMARK:misc:
+:PROPERTIES:
+:ID: 1fe6cea9dc25ce7f0a8d0fb506999318bf081455
+:CREATED: [2020-11-25 Wed 14:57]
+:Source: [[https://github.com/alphapapa/org-protocol-capture-html#org-protocol-instructions]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{1fe6cea9dc25ce7f0a8d0fb506999318bf081455,
+  author =       {alphapapa},
+  howpublished = {Github},
+  note =         {Online; accessed 25 November 2020},
+  title =        {org-protocol-capture-html: Capture HTML from the
+                  browser selection into Emacs as org-mode content},
+  url =
+                  {https://github.com/alphapapa/org-protocol-capture-html#org-protocol-instructions},
+}
+#+end_src
+:END:
+* Computer Vision
+
+* Finance
+
+* Cognitive Science
+
+* TODO  [Duckduckgo] DuckDuckGo — Privacy, simplified. :BOOKMARK:misc:
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 07:51]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:END:
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 07:53]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:END:
+:PROPERTIES:
+:ID: 003675cbf264b7905a2552dd9df22796d50bf68c
+:CREATED: [2020-11-25 Wed 13:31]
+:Source: [[http://duckduckgo.com/title]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{003675cbf264b7905a2552dd9df22796d50bf68c,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {title at DuckDuckGo},
+  url =          {http://duckduckgo.com/title},
+}
+#+end_src
+:END:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 13:32]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:END:
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 13:34]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:END:
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 13:46]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 13:49]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:END:
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 13:53]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:EN
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 13:53]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:EN
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 13:54]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:EN
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 14:47]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:END:
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 14:48]
+:Source: [[http://duckduckgo.com]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:END
+:PROPERTIES:
+:ID: dea05d826247dfff66d0cf07bb89c4fd18f790be
+:CREATED: [2020-11-25 Wed 14:48]
+:Source: [[http://duckduckgo.com]]
+:END:
+:LOGBOOK:
+CLOCK: [2020-11-25 Wed 14:48]--[2020-11-25 Wed 14:48] =>  0:00
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{dea05d826247dfff66d0cf07bb89c4fd18f790be,
+  howpublished = {Duckduckgo},
+  note =         {Online; accessed 25 November 2020},
+  title =        {DuckDuckGo — Privacy, simplified.},
+  url =          {http://duckduckgo.com},
+}
+#+end_src
+:END:
+:ID: 1fe6cea9dc25ce7f0a8d0fb506999318bf081455
+:CREATED: [2020-11-25 Wed 14:56]
+:Source: [[https://github.com/alphapapa/org-protocol-capture-html#org-protocol-instructions]]
+:END:
+#+begin_src bibtex
+@misc{1fe6cea9dc25ce7f0a8d0fb506999318bf081455,
+  author =       {alphapapa},
+  howpublished = {Github},
+  note =         {Online; accessed 25 November 2020},
+  title =        {org-protocol-capture-html: Capture HTML from the
+                  browser selection into Emacs as org-mode content},
+  url =
+                  {https://github.com/alphapapa/org-protocol-capture-html#org-protocol-instructions},
+}
+#+end_src
+:E
+* TODO  [Reddit] WSL2 + Org-Protocol? : emacs :BOOKMARK:misc:
+:PROPERTIES:
+:ID: 582b5538cede757f93815b339a0edefc31b012f2
+:CREATED: [2020-11-25 Wed 15:40]
+:Source: [[https://www.reddit.com/r/emacs/comments/i0f92n/wsl2_orgprotocol/]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{582b5538cede757f93815b339a0edefc31b012f2,
+  howpublished = {Reddit},
+  note =         {Online; accessed 25 November 2020},
+  title =        {WSL2 + Org-Protocol? : emacs},
+  url =
+                  {https://www.reddit.com/r/emacs/comments/i0f92n/wsl2_orgprotocol/},
+}
+#+end_src
+:END:
+* TODO  [Arxiv]  :BOOKMARK:misc:
+:PROPERTIES:
+:ID: 9d7e11ff6f8358aeb8f624d7847f1407420eb080
+:CREATED: [2020-11-25 Wed 15:45]
+:Source: [[https://arxiv.org/pdf/1610.07584.pdf]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{9d7e11ff6f8358aeb8f624d7847f1407420eb080,
+  howpublished = {Arxiv},
+  note =         {Online; accessed 25 November 2020},
+  url =          {https://arxiv.org/pdf/1610.07584.pdf},
+}
+#+end_src
+:END:
+* DONE [Arxiv]                                                :BOOKMARK:misc:
+:PROPERTIES:
+:ID: 9d7e11ff6f8358aeb8f624d7847f1407420eb080
+:CREATED: [2020-11-25 Wed 15:46]
+:Source: [[https://arxiv.org/pdf/1610.07584.pdf]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{9d7e11ff6f8358aeb8f624d7847f1407420eb080,
+  howpublished = {Arxiv},
+  note =         {Online; accessed 25 November 2020},
+  url =          {https://arxiv.org/pdf/1610.07584.pdf},
+}
+#+end_src
+:END:
+* TODO  [Arxiv]  :BOOKMARK:misc:
+:PROPERTIES:
+:ID: 9d7e11ff6f8358aeb8f624d7847f1407420eb080
+:CREATED: [2020-11-25 Wed 15:49]
+:Source: [[https://arxiv.org/pdf/1610.07584.pdf]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{9d7e11ff6f8358aeb8f624d7847f1407420eb080,
+  howpublished = {Arxiv},
+  note =         {Online; accessed 25 November 2020},
+  url =          {https://arxiv.org/pdf/@Online{wu16:_learn_probab_laten_s
+pace_objec,
+  author       = {Jiajun Wu AND Chengkai Zhang AND Tianfan Xue AND
+                  William T. Freeman AND Joshua B. Tenenbaum},
+  title        = {{Learning a Probabilistic Latent Space of Object
+                  Shapes via 3D Generative-Adversarial Modeling}},
+  year         = 2016,
+  archiveprefix= {arXiv},
+  eprint       = {1610.07584v2},
+  primaryclass = {cs.CV}
+}
+
+1610.07584.pdf},
+}
+#+end_src
+:END:
+* TODO  [Web.Mit]  :BOOKMARK:misc:
+:PROPERTIES:
+:ID: adc6d3475edd7dcc6e06bc6d749d221b480cb684
+:CREATED: [2020-11-26 Thu 04:08]
+:Source:   [[http://web.mit.edu/tger/www/papers/Causal\%20learning\%20from\%20interventions\%20and\%20dynamics\%20in\%20continuous\%20time,\%20Bramley\%20et\%20al.,\%202017.pdf]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{adc6d3475edd7dcc6e06bc6d749d221b480cb684,
+  howpublished = {Web.Mit},
+  note =         {Online; accessed 26 November 2020},
+  url =             {http://web.mit.edu/tger/www/papers/Causal\%20learning\%20from\%20interventions\%20and\%20dynamics\%20in\%20continuous\%20time,\%20Bramley\%20et\%20al.,\%202017.pdf},
+}
+#+end_src
+:END:
+* TODO  [Cims.Nyu]  :BOOKMARK:misc:
+:PROPERTIES:
+:ID: 0c965ca82902ecb60abb0599f45e88f396429085
+:CREATED: [2020-11-26 Thu 04:32]
+:Source: [[https://cims.nyu.edu/~bramley/publications/davis_ctcv.pdf]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{0c965ca82902ecb60abb0599f45e88f396429085,
+  howpublished = {Cims.Nyu},
+  note =         {Online; accessed 26 November 2020},
+  url =
+                  {https://cims.nyu.edu/~bramley/publications/davis_ctcv.pdf},
+}
+#+end_src
+:END:
+* TODO  [Cogsci.Mindmodeling]  :BOOKMARK:misc:
+:PROPERTIES:
+:ID: 11ae60e8691d55d466ca198be71f611559cee98e
+:CREATED: [2020-11-26 Thu 21:54]
+:Source: [[https://cogsci.mindmodeling.org/2018/papers/0073/0073.pdf]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{11ae60e8691d55d466ca198be71f611559cee98e,
+  howpublished = {Cogsci.Mindmodeling},
+  note =         {Online; accessed 26 November 2020},
+  url =
+                  {https://cogsci.mindmodeling.org/2018/papers/0073/0073.pdf},
+}
+#+end_src
+:END:
+* TODO  [Science.Sciencemag]  :BOOKMARK:misc:
+:PROPERTIES:
+:ID: 8b2439eabdc211f242a895b51407a04e984fb9c8
+:CREATED: [2020-11-26 Thu 22:42]
+:Source: [[https://science.sciencemag.org/content/sci/350/6266/1332.full.pdf]]
+:END:
+:BIBTEX:
+#+begin_src bibtex
+@misc{8b2439eabdc211f242a895b51407a04e984fb9c8,
+  howpublished = {Science.Sciencemag},
+  note =         {Online; accessed 26 November 2020},
+  url =
+                  {https://science.sciencemag.org/content/sci/350/6266/1332.full.pdf},
+}
+#+end_src
+:END:

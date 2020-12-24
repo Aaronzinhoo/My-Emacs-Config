@@ -1,0 +1,273 @@
+* Web-Development
+** Security
+*** Redirection
++ 
+** Authorization
+*** Acronyms/Definitions
++ =Provider=: service that verifies who you are, ("Log in with Gmail", Gmail=Provider)
++ =upstream Idp=: upstream identity provider
++ =scopes=: set of resources requested by service (requesting "profile" (scope) from FB scope of request is profile data)
+*** Prerequisites
++ OAuth & OICD=D need configuration for client application to work with =identity server= or =authorization server=
++ application gets =client I & =secret= from authorization server to validate requests made
+*** OAuth 2.0
++ A framework for authorization
++ *ONLY* for authorization (not authentication)
++ *UNIQUE* per provider (Facebooks auth token different from Github)
+**** User + Application + API
++ an =application= or =service= (Spotify) gets access to User (You) account through API on another =service=
++ No strict rules on what resources =application= can ask to access
++ *app1* is the /application/ requesting data
++ *app2* contains /resources/ or the needed data
+**** Why?
++ So a user does not have send private information (logins/passwords) across multiple services
++ easy to scale to more APIs once implemented
++ provides *LIMITED* access to service resources
++ =Example:= connecting application to gmail, but /only/ allow application to access contacts list!
+**** How?
++ 2 stages.
+  1. Get =access token=
+  2. Get resources with =access token=
+***** Application (App1) <==> API Authorization Server (App2)
+1. User logs into *app1* that requests access to resource from *app2*
+2. *Authorization server* verfies user allows *app1* to access resources
+3. *auth. server* sends *app1* =private access key=
+4. *app1* sends =private access key= back to *auth. server* to get =access token= (authorization for resources)
+***** Application (App1) <==> Resource Server (App2) (uses OpenID Connect)
+1. *app1* accesses resources using =access token=
+2. *app2* verifies =access token= can access users resources
+3. If verified => *resource server* sends requested resource to *ap1*
+**** Extra
++ Authorization server and resource server may not from same server or company
++ Step 4. is done directly, without using user browser
+*** OpenID Connect (OIDC)
++ thin-layer over OAuth framework
++ Similar to a Badge (provides privledgs + identification)
++ Enables client to establish login session and identify owner of resources.
++ =Dex= implements OIDC acting as =provider=
++ ~Identity Provider~ replaces =auth. server=
+**** Why?
++ One login can be used for multiple application or =single sign-on= (SSO)
++ security and conveinence
++ used for Organizations that have employees use many services, one login allows them to access all services
+**** How?
+***** Application (App1) <==> API Authorization Server (App2)
++ Same as above except 4.
++ *identity provider* sends =access token= *AND* =id token= (=JWT=)
++ The =id token= identifies user and allows access to service resources
+***** Application (App1) <==> Resource Server (App2) (uses OpenID Connect)
++ Same as above
+** Identification Tokens
+*** JWT (Javascript Web Token)
+**** Structure (3 parts)
+***** header
+***** payload
+***** signature (for first two fields)
+
+** Angular
+*** Intro Commands
++ =ng serve --open=: start application
++ =ng generate component=: create /heroes/ component in =app= folder (must use in project root)
+*** Imports
+**** =app.module.ts=
++ top level dependencies
++  controls apps packages using =@NgModule= decorator
+**** adding imports
+1. =import= package into =app.modules= files
+2. add package to =imports= under =@NgModule= decorator
+*** Components
+**** import
++ =import {Component} from '@angular/core'=
++ declare components in *ONLY ONE* =NgModule=
++ [[*Intro Commands][Intro Commands]] for automagic creation and importing
+**** Definition
+#+begin_src typescript
+  import { Component, OnInit } from '@angular/core';
+
+  // metadata for component
+  @Component({
+    selector: 'app-heroes',
+    templateUrl: './heroes.component.html',
+    styleUrls: ['./heroes.component.css']
+  })
+  export class HeroesComponent implements OnInit {
+
+    constructor() { }
+
+    // place init logic here
+    ngOnInit() {
+    }
+
+  }
+#+end_src
+***** @Component
++ component metadata
++ =selector=:  name for parent to use to include component
++ =templateUrl=: html portion of component
++ =styleUrls=: css for component
+***** constructor
++ *ONLY* for initialization memebers
++ do nothing else (DONT CALL FUNCTIONS)
+***** ngOnInit
++ call render dependent functions here
+**** Binding
++ =[(ngModel)]=<variable>=: used for two binding for component's <variable>
++ =import {FormsModule} from '@angular/forms';=: MUST IMPORT FOR 2-way binding
++ change in input => change in variable =[(ngModel)]= atttached to
+**** Communication between components
+***** @Inptut
++ included from =core=
++ decorate variables to signal they will take input
+#+begin_src typescript
+  @Input() hero: Hero;
+#+end_src
+***** @Input variable assignment
++ assigning =@Input= variable occurs in HTML
++ ~<component_selector_name [input_variable_name]="value"></>~
+#+begin_src browser
+  <app-hero-detail [hero]="selectedHero"></app-hero-detail>
+#+end_src
+***** One-Way Binding
+****** Property Binding
+******* Syntax
++ ~[property]="value"~
+******* Info
++ bind from component property to html element
++ pass property value from one component to another
++ omit =[]= then assigns *string* =value= not *property* =value=
++ [[*@Input variable assignment][Example here:]], selectedHero binds to =hero= property of new component
+****** Event Binding
+******* Syntax
++ ~<html_element (event)="functionToCall()"/>~
+******* Info
++ communication from view to component
+***** Two-Way Binding
+****** Property Binding + Event Binding
+******* Syntax
++ ~[(ngModel)]="data1"~
+******* Info
++ uses both () and [] for event and property binding
++ component and view synchronized
++ ngModel combines =event= tracking and =property= assignment to synchronize component and view
+#+begin_src browser
+  <!-- these two are equivalent for two way binding -->
+  <input (input)="data1" = $event.target.value [value]="data1"/>
+
+  <input [(ngModel)]="data1" />
+#+end_src
+*** HTML Templates
+**** Pipes
++ =<h2>{{hero.name | uppercase}} Details</h2>= : pipes hero name to uppercase
++ https://angular.io/guide/pipes
+**** HTML Binding
+***** =*ngIf=
++ conditional rendering of component html
+****** *ngIf exmaple
++ only render if selectedHero exists
+#+begin_src browser
+  <div *ngIf="selectedHero">
+
+    <h2>{{selectedHero.name | uppercase}} Details</h2>
+    <div><span>id: </span>{{selectedHero.id}}</div>
+
+  </div>
+
+#+end_src
+*****  =*ngFor=
++ used to loop through lists
++ Ref: [[*Example:][Example:]]
+***** =(click)=
++ Angular event binding
+***** CSS Conditional Styling
+:PROPERTIES:
+:ID:       f51ca50e-4897-4efd-b42c-3f1135e44b89
+:END:
++ =[class.<css_class_name>]\(=)\ /some_condition/=: if /some_condition/ true then set style of tag to =css_class_name=
++ [[*Example:][Example:]] if the listed hero is equal to the selectedHero then add selected css
+***** Example:
+:PROPERTIES:
+:ID:       822aa141-da6a-436a-bc2d-90f83d034520
+:END:
+1. uses =*ngFor= to loop through a list =heroes=
+2. sets =<li>= css attribute for a hero to css class =selected= *IF* ~hero===selectedHero=~
+3. when user click on list element, send =hero= to =onSelect= funct
+#+begin_src browser
+  <li *ngFor="let hero of heroes"
+    [class.selected]="hero === selectedHero"
+    (click)="onSelect(hero)">
+    <span class="badge">{{hero.id}}</span> {{hero.name}}
+  </li>
+
+#+end_src
+*** Services
+**** Create
++ =ng generate service <name>=
+***** @Injectable() services
++ marks class as dependency injection system
++ can inject dependency & be injected dependency
+****** Register Service
++ must *register* service
++ register as =root= does 3 things
+  1. Resource Efficient by creating only one shared instance
+  2. able to inject into any class that needs it
+  3. removes service if not used
+#+begin_src typescript
+  import {Injectable} from "@angular/core";
+
+  @Injectable({
+      providedIn: 'root',
+  })
+#+end_src
+****** Use Service
+1. add service to other component
+2. create private vars of type =<service_name>= in CTOR (*Encapsulation*)
++ =NOTE=: service var can be public if needed to be accessed outside of component
+#+BEGIN_src typescript
+  // import {service_name} from 'service/path/here'
+  export class TestClass {
+      constructor(/*private <service_variable_name>: <service_name>*/){
+      }
+  }
+#+end_src
+****** Asynch Service
++ =Observables= are async objects that can be returned async
++ if service returns async data:
+  1. return =observable= from service function
+  2. component that uses service must subscribe to it
+#+begin_src typescript
+  getHeroes(): void{
+      this.heroService.getHeroes()
+        .subscribe(heroes => this.heroes = heroes);
+  }
+#+end_src
+*** Navigation
+**** Routing
+***** Setup
++ =ng generate module app-routing=: create routing module to manage routes
+***** Forward
+****** routerLink (HTML)
++ in html tags can use =routerLink= property to link to other page (SPA)
+****** window.location.href
++ general JS way to forcibly go to other page
+***** Backward
+***** Urls
+*** HTTP Service
+**** Setup
+***** Packages
++ =HttpClient=: http methods class
++ =HttpHeaders=: class that assigns headers
++ =Observable=: type of returned data from =HttpClient=
+**** Use
+***** REST example
++ create service that maintain CRUD operations
++ inject service into other components that initiate CRUD
++ pipe results to do something after
+**** Error Handling
+***** Packages/Functions
++ =catchError & tap= in =rxjs/operators=
++ called in pipe function after http request
+**** Observables
++ what is returned from =HttpClient= requests
++ must be =subscribed= to *OR* =pipe= to
+*** Putting it all together
+**** Search

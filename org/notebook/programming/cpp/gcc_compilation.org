@@ -1,0 +1,16 @@
+
+* GCC Compilation
+** What is GCC?
++ c compiler for *nix systems
+#+begin_src shell
+  gcc files/main.c
+#+end_src
+
+#+RESULTS:
+
+** Compilation Phases
+*** Preprocessor
++
+*** Compiler
+*** Assembler
+*** Linker

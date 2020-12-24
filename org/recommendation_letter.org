@@ -1,0 +1,18 @@
+
+Dear Admission Committee,
+
+It is with great pleasure that I recommend Yining Wang for the Master’s Program at the University of California, Los Angeles. As former Product Manager at
+FashionX, I have known Yining Wang for over three months and believe he is more than prepared to take on graduate study at UCLA. Working with him daily, I have
+had the opportunity to observe his performance, teamwork, and eagerness to achieve and these qualities make him a perfect candidate.
+
+FashionX main goal was bringing fashion analytics to a modern platform utilizing artificial intelligence. The software included a composition of AI detection networks that could tell the color, pattern, and style of clothing items and a website to for users to investigate the findings from the software through different visualizations. As one of our interns 2020 summer interns, Yining Wang was responsible for this latest project’s front-end web development, spearheading several projects to develop user friendly responsive UI in React. Since our analytics were contextually shown based on user parameters such as date, clothing category, and location, Yining setup a wonderfuly sleek menu interface that allowed the users to switch and merge these contexts while maintaining high quality code and staying true to SOLID priciples. Yining also developed our report pages from the ground up creating customized visualizations that captured interesting connections in an engaging way.
+
+With a background in Computer Science, Yining was trusted with many tasks that may not have been his forte, but he proved he could rise to the challenge and adapt to any environment we needed him to. He showed his talent in being able to look at projects not just from a software enginnering perspective, but also a user perspective and develop components that were both functional, reusable, and simple. I was impressed with his diligence and attention to detail when it came to making quality software and developing with ever-changing specifications. Yining was never hesitant to ask questions or ask for guidance from our other interns and developers who knew more than he did. This openness to learn is what impressed me the most overall and ensured me that I could depend on him to get the job done and understand exactly what he was doing rather than just copying from others. Beyong all else, Yining created a wonderful working evironment by being genuine and comedic when times called for it. His prescenc helped uplift many of the developers and motivated them during hard times. I believe his passion to learn, ability to adapt, and skills in computer science are more than enough to confidently recommend him to your program.
+
+Knowing what a great addition Yining Wang has been to FashionX, I recommend him to your program without the slightest hesitation and wish him the best in both his future academic and professional endeavors. Should you have any further questions or need any additional information regarding Yining Wang’s admission to your university, feel free to contact me.
+
+
+Aaron Gonzales
+Former Product Manager
+FashionX (MJ Style LLC.)
+Los Angeles, CA

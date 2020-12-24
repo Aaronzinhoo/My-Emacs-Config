@@ -1,0 +1,483 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+#+title: Javascript Tutorial
+#+date: <2020-09-30 Wed>
+#+author: DESKTOP-E067H1Q
+#+email: aaronzinho@DESKTOP-E067H1Q
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.3 (Org mode 9.1.9)
+#+PROPERTY: header-args    :results output replace :exports both
+
+* Javascript Tutorial
+** Basics
+*** Javascript Org Practice
+   #+NAME: first block
+   #+BEGIN_SRC js :results output
+     console.log("hell22o");
+     console.log("this is too cool")
+   #+END_SRC
+
+   #+RESULTS: first block
+   : hell22o
+   : this is too cool
+
+*** Javascript Variables
+Basic Types: number, bigint, string, boolean, null, undefined, object, Symbol
++ null: empty or not assiged
++ undefined: declared but not initialized
++ values are copied and assigned by value (deep copy)
+#+begin_src js :results output
+  let s1 = null;
+  let s2;
+  let s3 = "string";
+  console.log(s1, s2, typeof(s3))
+#+end_src
+
+#+RESULTS:
+: null undefined string
+
+*** String Expressions
+#+begin_src js :results output
+  // backticks embed expression inside ${...} into string
+  let s = "number"
+  console.log(`this is ${2}`);
+  console.log(`this is ${"s"}`);
+  console.log(`this is ${s}`);
+#+end_src
+
+#+RESULTS:
+: this is 2
+: this is s
+: this is number
+
+*** Prompts, Alerts, & Confirmations
+Prompt, Alert, and Confirm are used to engage with the user by either requesting information from them or providing them a message.
+#+begin_src js :results output
+  // cannot run this code in org-mode since no window exists
+  //let isBoss = window.confirm("Are you the boss?");
+  //alert( isBoss );
+
+  //let test = prompt("Test", ''); // <-- for IE
+
+  //alert("This is a message")
+#+end_src
+
+#+RESULTS:
+
+*** Conversions
++ Boolean conversion: occurs at time of boolean expression
++ Number conversion: occurs at time of math operation or explicit conversion Number(<some value here>)
++ String conversion: occurs at time when string needed i.e. alert, or explicit conversion String(<some value>)
+#+begin_src js :results output
+  let s = "0";
+  let s1 = "";
+  let n = null;
+  let u = undefined;
+  let num = 3;
+  let b = true
+
+  console.log(String(num), typeof(String(num)))
+  console.log(String(u), typeof(String(u)))
+  console.log(String(b), typeof(String(b)))
+  console.log(Number(s)) // strings evaluate to 1
+  console.log(Number(b))
+  console.log(Number(n)) // null are 0
+  console.log(Number(u))
+  console.log(Number(s1)) // empty string -> 0 which means it is also false!
+  console.log(Boolean(n))
+  console.log(Boolean(u))
+  console.log(Boolean(num))
+  console.log(Boolean(s))
+  console.log(Boolean(s1))
+  console.log("hkfekjdgfskjjdflksdfhh")
+#+end_src
+
+#+RESULTS:
+#+begin_example
+3 string
+undefined string
+true string
+0
+1
+0
+NaN
+0
+false
+false
+true
+true
+false
+hkfekjdgfskjjdflksdfhh
+#+end_example
+
++ Math operation conversion will priortize conversion to string when using '+'
++ Every other math operation converts to number if possible
++ Boolean operations convert to numbers before evaluating when using ==
+#+begin_src js :results output
+  let x = "2" * 2;
+  console.log(x);
+
+  x = "2" / "2";
+  console.log(x);
+
+  //order matters
+  let s = 4 + 5 + "px";
+  console.log(s);
+
+  s = "px" + 4 + 5;
+  console.log(s);
+
+  // this conversion will not work so it will be NaN
+  x = "4px" - 2;
+  console.log(x)
+
+  let b = "2" > 1; // true
+  console.log(2);
+
+  let i1 = 0;
+  let i2 = "0";
+  console.log(i1 == i2); // true
+#+end_src
+
+#+RESULTS:
+: 4
+: 1
+: 9px
+: px45
+: NaN
+: 2
+: true
+*** Equality
++ ~==~: converts to numbers so it is not strict ~(0 == "0" returns true)~
++ ~===~: check without conversion, ~(0 == "0" returns false)~ YEA!
+
+Notes:
+    + ~undefined~ & ~null~ are treated as equivalent with ~==~ so ~null==undefined~ only!!
+    + ~undefined~ does not equal to anything
+
+#+begin_src js :results output
+  console.log(0==="0");
+  console.log(null == 0);
+  console.log(null >= 0);
+  console.log(null == undefined);
+
+#+end_src
+
+#+RESULTS:
+: false
+: false
+: true
+: true
+
+*** Conditionals
+Understanding conditionals and equality makes it easy to realize how conditionals function.
+The addition to the standard ~||~ & ~&&~ is the coalescing operator ~??~.
++ ~??~: returns first *defined* value
+#+begin_src js :exports both :results both
+  let x;
+  //let y = x ?? 20; unusable in org
+  //console.log(y); results in 20, null == undefined
+  console.log((null || 1));
+  console.log((0 && 1));
+  return ("0" > 2) ? "yes!" : "no"
+#+end_src
+#+RESULTS:
+: 1
+: 0
+: 'no'
+*** Control Flow
++ if, for, do-while, while, break, continue all similar syntax to c++
++ switch uses ~===~ for comparison so types must be the same!!!
+*** Functions
+Functions are used similarly to c++ and have access to variables outside of their scope unless variable is overwritten locally.
+#+begin_src js :results both :exports both
+  let val = 25;
+
+  function getValue(){
+    let new_val = 2+val;
+    return new_val
+  }
+
+  return getValue();
+#+end_src
+
+#+RESULTS:
+: 27
+
+**** Function Expression
+When function is assigned to a variable it is a *function expression*
+Note: should use ~;~ at the end of the line
+#+begin_src js :results output :exports both
+  let func = function (value){
+    console.log(value)
+  };
+
+  func(25);
+#+end_src
+
+#+RESULTS:
+: 25
+
+**** Callback Functions
+Functions to call once the result of another function has returned
+#+begin_src js :exports both :results output
+  function getAnswerFromUser(question, yes_callback, no_callback){
+    return (question() === "Yes") ? yes_callback() : no_callback()
+  }
+
+  function question(){
+    return "Yes";
+  };
+
+  function showYes (){
+    return "they said yes!";
+  }
+
+  function showNo (){
+    return "they said no!";
+  }
+
+  console.log(getAnswerFromUser(question, showYes, showNo));
+#+end_src
+
+#+RESULTS:
+: they said yes!
+
+**** Arrow Functions
+Arrow functions allow for brevity and conciseness in code, same code above rewritten in arrow notation
+- for multiline arrow functions encapsulate body with ~{ ... }~ & need explicit return statement to reuturn something
+#+begin_src js :exports both :results output
+  // when no {} around body, there is an implicit return
+  let getAnswerFromUser = (question, yes_callback, no_callback) =>
+      (question() === "Yes") ? yes_callback(): no_callback();
+
+  // no argument arrow function
+  let question = () => "Yes";
+
+  let showYes = () => "They said yes!";
+
+  let showNo = () => "They said no!";
+
+  console.log(getAnswerFromUser(question, showYes, showNo));
+#+end_src
+
+#+RESULTS:
+: They said yes!
+
+**** Function Declaration vs Function Expression
++ expressions can be used after they are defined
++ declaration can be used in *anywhere* in block they are defined
+** Objects
+*** Intro to Objects
++ Objects are associative arrays
++ Objects store values using key:value pairs that can be accessed using dot or bracket notation
+*** Property Manipulation
+**** Access Properties
++ Properties can be accessed with dot or bracket notation
+#+begin_src js :exports both :results output
+  let user = {
+    name:"Jon",
+    age: 30
+  };
+
+  console.log(user.name);
+  console.log(user["age"]);
+#+end_src
+
+#+RESULTS:
+: Jon
+: 30
+
++ Objects that are declared with const can have their properties changed. The object itself *cannot* be reassigned!
+#+begin_src js :exports both :results output
+  const user = {
+    name:"Jon"
+  };
+
+  user.name = "Bob";
+  console.log(user);
+  //user= {name:"Jon"}; results in error
+  //console.log(user);
+#+end_src
+
+#+RESULTS:
+: { name: 'Bob' }
+**** Adding and Deleting Properties
++ can be *added* using dot or bracket notation
++ They can be deleted using the ~delete~ keyword
+#+begin_src js :exports both :results output
+  let user = {
+    name:"John"
+  };
+
+  user.age = 30;
+  console.log(user);
+  delete user.name;
+  console.log(user);
+#+end_src
+
+#+RESULTS:
+: { name: 'John', age: 30 }
+: { age: 30 }
+
++ functions can be added as well using either notation
+#+begin_src js :exports both :results output
+  let user = {
+    //function omitted
+    sayHi(){
+      console.log("hi");
+    },
+    sayBye: function(){
+      console.log("bye");
+    }
+  };
+
+  user.sayHi();
+  user.sayBye();
+#+end_src
+
+#+RESULTS:
+: hi
+: bye
+
+**** Accessing Many Properties
+Most languages offer an easy way to access properties of an object through looping. Javascript does this by using the ~for...in~ loop
+#+begin_src js :exports both :results output
+  let user = {
+    name:"Jon",
+    age:30,
+    job:"teacher"
+  };
+
+  for (let key in user){
+    console.log(user[key]);
+  }
+#+end_src
+
+#+RESULTS:
+: Jon
+: 30
+: teacher
+*** Property Existence
++ ~in~ or ~===~ operator can be used to test object property existence
+#+begin_src js :exports both :results output
+  const user = {};
+
+  console.log(user.name === undefined);
+  console.log("name" in user);// more complete way
+#+end_src
+
+#+RESULTS:
+: true
+: false
+*** Copying
++ Primitives are copied/assigned by value
++ Objects are stored in variable as a "pointer" to object. When object copied to new variable, both variables reference same object
++ to create deep copy use the ~Object.assign~ method
++ If more object has nested objects use library like *Lodash* for deep copies
+#+begin_src js :exports both :results output
+  let user = {
+    name:"Jon",
+    age:30
+  };
+
+  let user_copy = user; //not a deep copy
+  delete user_copy.age
+  console.log("Shallow Copy\n",user_copy, "\nOriginal Copy\n",user);
+
+  let user_deep_copy = Object.assign({}, user); // create deep copy
+
+  user_deep_copy.age = 30;
+  console.log("Deep Copy\n", user_deep_copy, "\nOriginal Copy\n", user);
+#+end_src
+
+#+RESULTS:
+: Shallow Copy
+:  { name: 'Jon' }
+: Original Copy
+:  { name: 'Jon' }
+: Deep Copy
+:  { name: 'Jon', age: 30 }
+: Original Copy
+:  { name: 'Jon' }
+
+*** Using ~this~
++ is not bound and can be used in any context
++ is evaluated at run-time
++ to access properties of object method can use ~this~
++ calling ~this~ without object reference leads to ~undefined~ (unless not in ~strict mode~ then this will be ~window~)
+#+begin_src js :exports both :results output
+  function makeUser(){
+    return {
+      name:"Jon",
+      ref:this
+    };
+  };
+
+  const user = makeUser(); //this will ref.  undefined (owner of makeUser)
+  console.log(user.ref.name); //will not work in strict mode
+
+  // lets make it reference user
+  const referenced_user = {
+    name:"Able",
+    makeUser: null
+  };
+
+  // or can have ref be a function
+  function makeReferencedUser(){
+    return {
+      name:"Jon",
+      ref() {return this}
+    };
+  }
+
+  referenced_user.makeUser = makeUser; // at runtime ref will point to referenced_user now
+  console.log(referenced_user.makeUser().ref.name);
+  referenced_user.makeReferencedUser = makeReferencedUser; // at runtime ref will point to referenced_user now
+  console.log(referenced_user.makeReferencedUser().name);
+#+end_src
+
+#+RESULTS:
+: undefined
+: Able
+: Jon
+
++ arrow funtions have no ~this~ and take ownership from outer context. ~this~ is notcreated for each object it is assigned to
+#+begin_src js :exports both :results output
+  'use strict'
+
+  function makeUser(){
+      return {
+        name:"Jon",
+        ref: () => this
+      };
+  };
+
+  // will be undefined in strict mode
+  console.log(makeUser().ref())
+
+  let user = {
+    makeUser
+  }
+
+  // will be makeUser now
+  console.log(user.makeUser().ref())
+#+end_src
+
+#+begin_src js
+  function makeUser(){
+    return {
+      name:"John",
+      ref:()=>this,
+    };
+  };
+
+
+#+end_src
+
+#+RESULTS:
